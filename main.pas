@@ -31,6 +31,7 @@ begin
     game_arr := gen_board(n, False);
 
     print_board(real_arr, n);
-
+    writeln('-------------------------------------------------------');
+    print_board(game_arr, n);
     writeln;
 end.
