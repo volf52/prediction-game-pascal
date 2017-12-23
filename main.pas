@@ -8,8 +8,9 @@ uses
 
 var
     
-    real_arr, game_arr  : matrix; 
-    i, j, k, n : Integer;
+    game_board  : matrix; 
+    n : Integer;
+    reveal : Boolean;
 begin
 
     {Getting the input}
@@ -25,13 +26,10 @@ begin
         writeln;
     until n in [6, 8, 10];
     
+    reveal := False;
 
-
-    real_arr := gen_board(n, True);
-    game_arr := gen_board(n, False);
-
-    print_board(real_arr, n);
+    game_board := gen_board(n);
+    game_board[3,4].status := clear;
+    print_board(game_board, n, reveal);
     writeln('-------------------------------------------------------');
-    print_board(game_arr, n);
-    writeln;
 end.
