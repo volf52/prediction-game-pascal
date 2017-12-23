@@ -36,21 +36,21 @@ implementation
 
 				p.player_name.firstname := 'BOT';
 				case num of
-					1 : p.player_name.lastname := '_One';
-					2 : p.player_name.lastname := '_Two';
+					1 : p.player_name.lastname := '_ONE';
+					2 : p.player_name.lastname := '_TWO';
 				end;
 				repeat
 					Writeln;
 					Writeln;
-					Writeln('What level should ', p.player_name.firstname, p.player_name.lastname, ' have...?');
+					Writeln('What level should BOT', p.player_name.lastname, ' have...?');
 					Writeln('1- Beginner');
 					Writeln('2- Intermediate');
 					Writeln('3- Advanced');
 					Writeln('4- Professional');
-					Writeln('Surprise');
+					Writeln('5- Surprise');
 					Write('--> ');
 					readln(tmp_type);	
-				until (tmp_type in [1..4]);
+				until (tmp_type in [1..5]);
 				p.level := tmp_type;
 				p.current_prediction := 1;
 					
@@ -73,13 +73,16 @@ implementation
 		correct_input, valid_input, correct_prediction : Boolean;
 		x1, x2, y1, y2 : Integer;
 	begin
+		correct_prediction := False;
+		repeat
+
 		if (p.player_type = Human) then
 			begin
 				repeat
 					writeln('Enter prediction 1: ');
-			        write('(x y) --> ');
-			        read(x1);
-			        read();
+			        write('x --> ');
+			        readln(x1);
+			        write('y --> ');
 			        readln(y1);
 			        correct_input := (x1 in [1..n]) AND (y1 in [1..n]);
 			        if correct_input then
@@ -94,13 +97,13 @@ implementation
 				repeat
 					writeln;
 					writeln('Enter prediction 2: ');
-			        write('(x y) --> ');
-			        read(x2);
-			        read();
+			        write('x --> ');
+			        readln(x2);
+			        write('y --> ');
 			        readln(y2);
 			        correct_input := (x2 in [1..n]) AND (y2 in [1..n]);
 			        if correct_input then
-			        	valid_input := (game_board[x2-1, y2-1].status = hidden);		
+			        	valid_input := ((game_board[x2-1, y2-1].status = hidden) AND (not ( (x1 = x2) AND (y1 = y2))) );		
 				until valid_input;
 				writeln;
 				game_board[x2-1, y2-1].status := highlighted;
@@ -111,16 +114,29 @@ implementation
 				if correct_prediction then
 					begin
 						writeln;
-						write('Congrats for the correct prediction.');
+						writeln(' Congrats for the correct prediction.');
 						game_board[x1-1, y1-1].status := clear;
 						game_board[x2-1, y2-1].status := clear;
+						writeln;
+						print_board(game_board, n, False);
+						writeln;
 						p.score := p.score + 1;
-					end;
+					end
+				else
+					writeln(' Wrong prediction.');
 				writeln;
-				print_board(game_board, n, False);
-				writeln;	
 				evaluate_turn := correct_prediction;
-			end;
+			end
+			else
+				begin
+					
+
+
+
+				end;
+			
+		until (not correct_prediction);
+		
 	
 
 
