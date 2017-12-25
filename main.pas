@@ -35,7 +35,8 @@ end;
 
 
 var
-    game_board  : matrix; 
+    game_board  : matrix;
+    availableCells : statusTracker; 
     n, i, j, x1, x2, y1, y2 : Integer;
     p : player_array;
     correct_prediction : Boolean;
@@ -59,7 +60,7 @@ begin
     until n in [6, 8, 10];
 
     writeln('Generating Board...');
-    game_board := gen_board(n);
+    game_board := gen_board(n, availableCells);
     repeat
         writeln;
         writeln('1- Human vs Human.');
@@ -90,11 +91,11 @@ begin
         begin
         repeat
             printCurrentState(game_board, p, n, i, j);
-            evaluate_turn(n, 1, p[j], game_board, x1, y1);
+            evaluate_turn(n, 1, p[j], game_board, availableCells, x1, y1);
             game_board[x1-1, y1-1].status := highlighted;
             printCurrentState(game_board, p, n, i, j);
             game_board[x1-1, y1-1].status := hidden;
-            evaluate_turn(n, 2, p[j], game_board, x2, y2);
+            evaluate_turn(n, 2, p[j], game_board,availableCells, x2, y2);
             game_board[x2-1, y2-1].status := highlighted;
             printCurrentState(game_board, p, n, i, j);
             game_board[x2-1, y2-1].status := hidden;
@@ -106,6 +107,8 @@ begin
                     Writeln('Enter the next one.');
                     game_board[x1-1, y1-1].status := clear;
                     game_board[x2-1, y2-1].status := clear;
+                    //availableCells[((x1-1)*n) + (y1-1)];
+                    //availableCells[((x2-1)*n) + (y2-1)] := False;
                     p[j].score := p[j].score + 1;
                 end
             else

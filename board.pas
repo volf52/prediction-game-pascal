@@ -14,15 +14,18 @@ interface
     	cell = record
     		val : Integer;
     		status : (highlighted, clear, hidden);
+    		in_memory : Boolean;
     	end;
 	    matrix = array of array of cell;
+	    statusTracker = array of cell;
 	    intSet = set of 1..100;
 	    tmparr = array[1.. (max*max)] of integer;
            
     
 
     procedure print_board(board : matrix; n : integer; reveal : Boolean);
-    function gen_board(n : Integer) : matrix;
+    procedure popCell(index : Integer; var available : statusTracker);
+   	function gen_board(n : Integer; var available : statusTracker) : matrix;
 
 
 
@@ -58,7 +61,19 @@ implementation
 	end;
 
 
-	function gen_board(n : Integer) : matrix;
+	procedure popCell(index : Integer; var available : statusTracker);
+    var
+    	i : Integer;
+    begin
+    	for i := (index + 1) to high(available) do
+	    	begin
+	    		available[i] := available[i+1];
+	    	end;
+    	SetLength(available, length(available) - 1);
+    end;
+
+
+	function gen_board(n : Integer; var available : statusTracker) : matrix;
 	var
 	    i, j, k,l,  tmp : Integer;
 	    board : matrix;
@@ -69,6 +84,7 @@ implementation
 	    randomize;
 	    tmpSet := [];
 	    setLength(board, n, n);
+	    setLength(available, (n*n));
 	    i := 0;
 	    repeat
 	            j := random(100);
@@ -104,8 +120,12 @@ implementation
 	    for i := low(board) to high(board) do
 	        for j := low(board[i]) to high(board[i]) do
 	        	begin
-	        		board[i, j].val := arr[ (i * (n)) + j + 1];
+	        		board[i, j].val := arr[ (i * n) + j + 1];
 	        		board[i, j].status := hidden;
+	        		board[i, j].in_memory := False;
+	        		available[ (i * n) + j ].val := board[i, j].val;
+	        		available[ (i * n) + j ].status := hidden;
+	        		available[ (i * n) + j ].in_memory := False;
 	        	end;
 	            
 

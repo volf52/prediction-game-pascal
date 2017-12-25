@@ -17,12 +17,12 @@ interface
 			score : Integer;
 			case player_type : pType of
 				Human : ();
-				Computer : (level, current_prediction : Integer)
+				Computer : (level, elements : Integer; pred_list : array[1..50] of integer)
 			end;
 
 
 	procedure getDetails(num : Integer; var p : Player);
-	procedure evaluate_turn(n, prediction_n: Integer; p : Player; game_board : matrix; var x, y :Integer);
+	procedure evaluate_turn(n, prediction_n: Integer; p : Player; game_board : matrix; available : statusTracker; var x, y :Integer);
 
 
 implementation	
@@ -52,7 +52,7 @@ implementation
 					readln(tmp_type);	
 				until (tmp_type in [1..5]);
 				p.level := tmp_type;
-				p.current_prediction := 1;
+				p.elements := 0;
 					
 			end
 			else
@@ -68,7 +68,7 @@ implementation
 			p.score := 0;		
 	end;
 
-	procedure evaluate_turn(n, prediction_n: Integer; p : Player; game_board : matrix; var  x, y :Integer);
+	procedure evaluate_turn(n, prediction_n: Integer; p : Player; game_board : matrix; available : statusTracker; var x, y :Integer);
 	var
 		correct_input, valid_input : Boolean;
 	begin
@@ -96,7 +96,10 @@ implementation
 			end
 			else
 				begin
-					
+					if (prediction_n = 1) then
+						begin
+							
+						end;
 
 
 
