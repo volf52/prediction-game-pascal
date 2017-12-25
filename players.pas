@@ -22,7 +22,7 @@ interface
 
 
 	procedure getDetails(num : Integer; var p : Player);
-	function evaluate_turn(n: Integer; var p : Player; game_board : matrix) : Boolean;
+	procedure evaluate_turn(n, prediction_n: Integer; p : Player; game_board : matrix; var x, y :Integer);
 
 
 implementation	
@@ -68,64 +68,31 @@ implementation
 			p.score := 0;		
 	end;
 
-	function evaluate_turn(n: Integer; var p : Player; game_board : matrix) : Boolean;
+	procedure evaluate_turn(n, prediction_n: Integer; p : Player; game_board : matrix; var  x, y :Integer);
 	var
-		correct_input, valid_input, correct_prediction : Boolean;
-		x1, x2, y1, y2 : Integer;
+		correct_input, valid_input : Boolean;
 	begin
-		correct_prediction := False;
-		repeat
-
 		if (p.player_type = Human) then
 			begin
 				repeat
-					writeln('Enter prediction 1: ');
-			        write('x --> ');
-			        readln(x1);
-			        write('y --> ');
-			        readln(y1);
-			        correct_input := (x1 in [1..n]) AND (y1 in [1..n]);
-			        if correct_input then
-			        	valid_input := (game_board[x1-1, y1-1].status = hidden);		
-				until valid_input;
-				writeln;
-				writeln;
-				game_board[x1-1, y1-1].status := highlighted;
-				print_board(game_board, n, False);
-				game_board[x1-1, y1-1].status := hidden;
-				writeln;
-				repeat
 					writeln;
-					writeln('Enter prediction 2: ');
+					writeln('Enter prediction ', prediction_n, ': ');
 			        write('x --> ');
-			        readln(x2);
+			        readln(x);
 			        write('y --> ');
-			        readln(y2);
-			        correct_input := (x2 in [1..n]) AND (y2 in [1..n]);
+			        readln(y);
+			        correct_input := (x in [1..n]) AND (y in [1..n]);
 			        if correct_input then
-			        	valid_input := ((game_board[x2-1, y2-1].status = hidden) AND (not ( (x1 = x2) AND (y1 = y2))) );		
+			        	begin
+			        		valid_input := (game_board[x-1, y-1].status = hidden);
+			        		if (not valid_input) then writeln('You should visit an eye doctor ... cause that box is already taken ...');
+			        	end
+			        	
+			        else
+			        	writeln('Out of bounds, try again...')		
 				until valid_input;
 				writeln;
-				game_board[x2-1, y2-1].status := highlighted;
-				print_board(game_board, n, False);
-				game_board[x2-1, y2-1].status := hidden;
-				writeln;
-				correct_prediction := (game_board[x1-1, y1-1].val = game_board[x2-1, y2-1].val);
-				if correct_prediction then
-					begin
-						writeln;
-						writeln(' Congrats for the correct prediction.');
-						game_board[x1-1, y1-1].status := clear;
-						game_board[x2-1, y2-1].status := clear;
-						writeln;
-						print_board(game_board, n, False);
-						writeln;
-						p.score := p.score + 1;
-					end
-				else
-					writeln(' Wrong prediction.');
-				writeln;
-				evaluate_turn := correct_prediction;
+				
 			end
 			else
 				begin
@@ -134,11 +101,6 @@ implementation
 
 
 				end;
-			
-		until (not correct_prediction);
-		
-	
-
 
 	end;
 
