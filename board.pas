@@ -9,15 +9,17 @@ interface
 
 	const
 		max = 10;
+		MAX_PAIRS=50;
 
     type
     	cell = record
-    		val : Integer;
+    		val, x, y : Integer;
     		status : (highlighted, clear, hidden);
     		in_memory : Boolean;
     	end;
 	    matrix = array of array of cell;
 	    statusTracker = array of cell;
+	    predictionArray = array[1..MAX_PAIRS, 1..2] of Integer;
 	    intSet = set of 1..100;
 	    tmparr = array[1.. (max*max)] of integer;
            
@@ -123,9 +125,9 @@ implementation
 	        		board[i, j].val := arr[ (i * n) + j + 1];
 	        		board[i, j].status := hidden;
 	        		board[i, j].in_memory := False;
-	        		available[ (i * n) + j ].val := board[i, j].val;
-	        		available[ (i * n) + j ].status := hidden;
-	        		available[ (i * n) + j ].in_memory := False;
+	        		board[i, j].x := (i+1);
+	        		board[i, j].y := (j+1);
+	        		available[ (i * n) + j ] := board[i, j];
 	        	end;
 	            
 

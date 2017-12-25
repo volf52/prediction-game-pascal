@@ -91,25 +91,42 @@ begin
         begin
         repeat
             printCurrentState(game_board, p, n, i, j);
-            evaluate_turn(n, 1, p[j], game_board, availableCells, x1, y1);
-            game_board[x1-1, y1-1].status := highlighted;
-            printCurrentState(game_board, p, n, i, j);
-            game_board[x1-1, y1-1].status := hidden;
-            evaluate_turn(n, 2, p[j], game_board,availableCells, x2, y2);
-            game_board[x2-1, y2-1].status := highlighted;
-            printCurrentState(game_board, p, n, i, j);
-            game_board[x2-1, y2-1].status := hidden;
+            if (p[j].player_type = Human) then
+                begin
+                    evaluate_human_turn(n, 1, game_board, x1, y1);
+                    game_board[x1-1, y1-1].status := highlighted;
+                    printCurrentState(game_board, p, n, i, j);
+                    game_board[x1-1, y1-1].status := hidden;
+                    evaluate_human_turn(n, 2, game_board, x2, y2);
+                    game_board[x2-1, y2-1].status := highlighted;
+                    printCurrentState(game_board, p, n, i, j);
+                    game_board[x2-1, y2-1].status := hidden;
+                end
+            else
+                begin
+                    evaluate_bot_turn(n, game_board, p[j], availableCells, x1, x2, y1, y2);
+                    game_board[x1-1, y1-1].status := highlighted;
+                    printCurrentState(game_board, p, n, i, j);
+                    game_board[x1-1, y1-1].status := hidden;
+                    game_board[x2-1, y2-1].status := highlighted;
+                    printCurrentState(game_board, p, n, i, j);
+                    game_board[x2-1, y2-1].status := hidden;
+                end;
+
             correct_prediction := (game_board[x1-1, y1-1].val = game_board[x2-1, y2-1].val);
             if correct_prediction then
                 begin
                     writeln;
-                    writeln(' Congrats for the correct prediction...');
-                    Writeln('Enter the next one.');
+                    writeln(' Correct prediction...');
+                    Writeln('Won the chance for one more...');
                     game_board[x1-1, y1-1].status := clear;
+                    game_board[x1-1, y1-1].in_memory := False;
                     game_board[x2-1, y2-1].status := clear;
-                    //availableCells[((x1-1)*n) + (y1-1)];
-                    //availableCells[((x2-1)*n) + (y2-1)] := False;
+                    game_board[x2-1, y2-1].in_memory := False;
+                    popCell( ((x1-1)*n) + (y1-1), availableCells);
+                    popCell( ((x2-1)*n) + (y2-1), availableCells);
                     p[j].score := p[j].score + 1;
+                    delay(2000);
                 end
             else
                 writeln(' Wrong prediction.');
