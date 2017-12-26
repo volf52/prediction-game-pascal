@@ -38,6 +38,7 @@ var
     game_board  : matrix;
     availableCells : statusTracker; 
     n, i, j, x1, x2, y1, y2 : Integer;
+    bot_coord : botC;
     p : player_array;
     correct_prediction : Boolean;
 begin
@@ -101,20 +102,30 @@ begin
                     game_board[x2-1, y2-1].status := highlighted;
                     printCurrentState(game_board, p, n, i, j);
                     game_board[x2-1, y2-1].status := hidden;
+                    correct_prediction := (game_board[x1-1, y1-1].val = game_board[x2-1, y2-1].val);
                 end
             else
                 begin
-                    evaluate_bot_turn(n, game_board, p[j], availableCells, x1, x2, y1, y2);
-                    game_board[x1-1, y1-1].status := highlighted;
+                    clean_memory(game_board, p[j]);
+                    bot_coord := evaluate_bot_turn(n, game_board, availableCells, p[j]);
+                    writeln(bot_coord[1], ' ', bot_coord[2], ' ', bot_coord[3], ' ', bot_coord[4]);
+                    game_board[bot_coord[1]-1, bot_coord[2]-1].status := highlighted;
                     printCurrentState(game_board, p, n, i, j);
-                    game_board[x1-1, y1-1].status := hidden;
+                    game_board[bot_coord[1]-1, bot_coord[2]-1].status := hidden;
+                    writeln('Computer has made the prediction:');
+                    writeln('X = ', bot_coord[1]);
+                    writeln('Y = ', bot_coord[2]);
                     delay(3000);
-                    game_board[x2-1, y2-1].status := highlighted;
+                    game_board[bot_coord[3]-1, bot_coord[4]-1].status := highlighted;
                     printCurrentState(game_board, p, n, i, j);
-                    game_board[x2-1, y2-1].status := hidden;
+                    game_board[bot_coord[3]-1, bot_coord[4]-1].status := hidden;
+                    writeln('Computer has made the prediction:');
+                    writeln('X = ', bot_coord[3]);
+                    writeln('Y = ', bot_coord[4]);
+                    correct_prediction := (game_board[bot_coord[1]-1, bot_coord[2]-1].val = game_board[bot_coord[3]-1, bot_coord[4]-1].val);
                 end;
 
-            correct_prediction := (game_board[x1-1, y1-1].val = game_board[x2-1, y2-1].val);
+            
             if correct_prediction then
                 begin
                     writeln;

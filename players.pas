@@ -10,6 +10,7 @@ interface
 
 	type
 		pType = (Human, Computer);
+		botC = array[1..4] of Integer;
 		Player = record
 			player_name : record
 				firstname, lastname : String;				
@@ -26,10 +27,12 @@ interface
 	procedure evaluate_human_turn(n, prediction_n: Integer; game_board : matrix; var x, y :Integer);
 	procedure popVal(index : Integer; var p : Player);
 	procedure clean_memory(board : matrix; var p : Player);
-	procedure find_matching(board : matrix; p_list : predictionArray; var x1, y1, x2, y2 : Integer);
-	procedure evaluate_bot_turn(n : Integer; game_board : matrix; var p : Player ; available : statusTracker; x1,x2,y1,y2 : Integer);
+	procedure find_matching(board : matrix; p : Player ; var x1, y1, x2, y2 : Integer);
+	function RandomRange(Low, High: LongInt) : LongInt;
+	function evaluate_bot_turn(n : Integer; game_board : matrix;  available : statusTracker; var p : Player) : botC;
 
 implementation	
+	
 
 	procedure getDetails(num : Integer; var p : Player);
 	var
@@ -119,7 +122,7 @@ implementation
 			i := 1;
 			while (i <= p.elements) do
 				begin
-					if(not board[p.pred_list[i, 1], p.pred_list[i, 2]].in_memory) then
+					if(not board[p.pred_list[i, 1]-1, p.pred_list[i, 2]-1].in_memory) then
 						popVal(i, p)
 					else
 					 i := i + 1;
@@ -142,7 +145,7 @@ implementation
 				begin
 					x2 := p.pred_list[j, 1];
 					y2 := p.pred_list[j, 2];
-					found := (board[x1, y1].val = board[x2, y2].val);
+					found := (board[x1-1, y1-1].val = board[x2-1, y2-1].val);
 					j := j + 1;
 				end;
 				i := i + 1;
@@ -150,27 +153,35 @@ implementation
 		if (not found) then x1 := -13;
 	end;
 
+	function RandomRange(Low, High: LongInt) : LongInt;
+		begin
+		  if High < Low then
+		    RandomRange := High + Random(High - Low)
+		  else
+		    RandomRange := Low + Random(Low -High);
+		end;
 
-	procedure evaluate_bot_turn(n : Integer; game_board : matrix; var p : Player ; available : statusTracker; x1,x2,y1,y2 : Integer);
+
+	function evaluate_bot_turn(n : Integer; game_board : matrix;  available : statusTracker; var p : Player) : botC;
 	var
 		i, j : Integer;
+		ret : botC;
 	begin
-		clean_memory(game_board, p);
-		x1 := -13;
+		ret[1] := -13;
 		if p.elements > 1 then
-			find_matching(game_board, p, x1, y1, x2, y2);
-		if (x1 < 0) then
+			find_matching(game_board, p, ret[1], ret[2], ret[3], ret[4]);
+		if (ret[1] < 0) then
 			begin
-				randomize;
-				i := random(length(available));
-				x1 := available[i].x;
-				y1 := available[i].y;
+				i := RandomRange(low(available), length(available));
+				ret[1] := available[i].x;
+				ret[2] := available[i].y;
 				repeat
-					j := random(length(available));
+					j := RandomRange(low(available), length(available));
 				until (i <> j);
-				x2 := available[i].x;
-				y2 := available[i].y;
+				ret[3] := available[j].x;
+				ret[4] := available[j].y;
 			end;
+		evaluate_bot_turn := ret;
 	end;
 
 end.
