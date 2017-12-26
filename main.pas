@@ -108,6 +108,7 @@ begin
                     game_board[x1-1, y1-1].status := highlighted;
                     printCurrentState(game_board, p, n, i, j);
                     game_board[x1-1, y1-1].status := hidden;
+                    delay(3000);
                     game_board[x2-1, y2-1].status := highlighted;
                     printCurrentState(game_board, p, n, i, j);
                     game_board[x2-1, y2-1].status := hidden;

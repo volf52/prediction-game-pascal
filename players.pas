@@ -70,8 +70,6 @@ implementation
 					readln(p.player_name.firstname);
 					Write('OK ', p.player_name.firstname, ', enter your Last Name -> ');
 					readln(p.player_name.lastname);
-
-
 				end;
 
 			p.score := 0;		
@@ -128,9 +126,28 @@ implementation
 				end;
 		end;
 
-	procedure find_matching(board : matrix; p_list : predictionArray; var x1, y1, x2, y2 : Integer);
+	procedure find_matching(board : matrix; p : Player ; var x1, y1, x2, y2 : Integer);
+	var
+		i, j : Integer;
+		found : Boolean;
 	begin
-		
+		i := 1;
+		found := False;
+		while((not found) AND (i < p.elements)) do
+			begin
+				x1 := p.pred_list[i, 1];
+				y1 := p.pred_list[i, 2];
+				j := i+1;
+				while ((not found) AND (j <= p.elements)) do
+				begin
+					x2 := p.pred_list[j, 1];
+					y2 := p.pred_list[j, 2];
+					found := (board[x1, y1].val = board[x2, y2].val);
+					j := j + 1;
+				end;
+				i := i + 1;
+			end;
+		if (not found) then x1 := -13;
 	end;
 
 
@@ -141,7 +158,7 @@ implementation
 		clean_memory(game_board, p);
 		x1 := -13;
 		if p.elements > 1 then
-			find_matching(game_board, p.pred_list, x1, y1, x2, y2);
+			find_matching(game_board, p, x1, y1, x2, y2);
 		if (x1 < 0) then
 			begin
 				randomize;
