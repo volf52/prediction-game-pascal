@@ -135,8 +135,11 @@ begin
                     game_board[x1-1, y1-1].in_memory := False;
                     game_board[x2-1, y2-1].status := clear;
                     game_board[x2-1, y2-1].in_memory := False;
-                    popCell( ((x1-1)*n) + (y1-1), availableCells);
-                    popCell( ((x2-1)*n) + (y2-1), availableCells);
+                    if (p[j].player_type = human) then {Computer will pop them out of available when adding to pred_list. So, this should be done only for computer.}
+                        begin
+                            popCell( ((x1-1)*n) + (y1-1), availableCells);
+                            popCell( ((x2-1)*n) + (y2-1), availableCells);
+                        end;
                     p[j].score := p[j].score + 1;
                     delay(2000);
                 end

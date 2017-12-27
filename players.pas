@@ -164,7 +164,7 @@ implementation
 
 	function evaluate_bot_turn(n : Integer; game_board : matrix;  available : statusTracker; var p : Player) : botC;
 	var
-		i, j : Integer;
+		i, j, toAdd : Integer;
 		ret : botC;
 	begin
 		ret[1] := -13;
@@ -181,18 +181,18 @@ implementation
 				ret[3] := available[j].x;
 				ret[4] := available[j].y;
 			end;
-		if (p.level in [1..4]) then
+		if (p.level = 5) then toAdd := random(4) else toAdd := p.level;
+			
+		for i := 1 to toAdd do
 			begin
-				for i := 1 to p.level do
-					begin
-						repeat
-							j := RandomRange(low(available), high(available));
-						until (available[j].in_memory = False);
-						p.elements := p.elements + 1;
-						p.pred_list[p.elements, 1] := available[j].x;
-						p.pred_list[p.elements, 2] := available[j].y;
-						popCell(j, available); 
-					end;
+				repeat
+					j := RandomRange(low(available), high(available));
+				until (game_board[available[j].x-1, available[j].y-1].in_memory = False);
+				p.elements := p.elements + 1;
+				p.pred_list[p.elements, 1] := available[j].x;
+				p.pred_list[p.elements, 2] := available[j].y;
+				game_board[available[j].x-1, available[j].y-1].in_memory := True;
+				popCell(j, available); 
 			end;
 		evaluate_bot_turn := ret;
 	end;
