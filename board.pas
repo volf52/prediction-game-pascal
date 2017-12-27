@@ -67,7 +67,7 @@ implementation
     var
     	i : Integer;
     begin
-    	for i := (index + 1) to (high(available)-1) do
+    	for i := index to (high(available)-1) do
 	    	begin
 	    		available[i] := available[i+1];
 	    	end;
