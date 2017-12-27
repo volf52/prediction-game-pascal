@@ -181,6 +181,19 @@ implementation
 				ret[3] := available[j].x;
 				ret[4] := available[j].y;
 			end;
+		if (p.level in [1..4]) then
+			begin
+				for i := 1 to p.level do
+					begin
+						repeat
+							j := RandomRange(low(available), high(available));
+						until (available[j].in_memory = False);
+						p.elements := p.elements + 1;
+						p.pred_list[p.elements, 1] := available[j].x;
+						p.pred_list[p.elements, 2] := available[j].y;
+						popCell(j, available); 
+					end;
+			end;
 		evaluate_bot_turn := ret;
 	end;
 

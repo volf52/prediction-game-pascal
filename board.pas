@@ -67,7 +67,7 @@ implementation
     var
     	i : Integer;
     begin
-    	for i := (index + 1) to high(available) do
+    	for i := (index + 1) to (high(available)-1) do
 	    	begin
 	    		available[i] := available[i+1];
 	    	end;
@@ -89,7 +89,7 @@ implementation
 	    setLength(available, (n*n));
 	    i := 0;
 	    repeat
-	            j := random(100);
+	            j := random(99)+1; {Not using random(100) cause tmpSet is defined for 1..100 ... in cases where random produces 0, there will be a runtime error}
 	            if not (j in tmpSet) then
 	                begin
 	                include(tmpSet, j);
