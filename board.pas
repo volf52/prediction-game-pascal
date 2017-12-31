@@ -12,28 +12,28 @@ interface
 		MAX_PAIRS=50;
 
     type
-    	cell = record
+    	cell = record   {An "object" to keep track of each cell}
     		val, x, y : Integer;
     		status : (highlighted, clear, hidden);
     		in_memory : Boolean;
     	end;
-	    matrix = array of array of cell;
-	    statusTracker = array of cell;
-	    predictionArray = array[1..MAX_PAIRS, 1..2] of Integer;
-	    intSet = set of 1..100;
-	    tmparr = array[1.. (max*max)] of integer;
+	    matrix = array of array of cell; {A dynamic, 2D array of cells to replicate a board}
+	    statusTracker = array of cell; {Dynamic array to keep track of available cells}
+	    predictionArray = array[1..MAX_PAIRS, 1..2] of Integer; {The "memory" of a bot player}
+	    intSet = set of 1..100; {A set of values between 1 and 100}
+	    tmparr = array[1.. (max*max)] of integer; {A temp array to randomize the number pairs on the board}
            
     
 
-    procedure print_board(board : matrix; n : integer; reveal : Boolean);
-    procedure popCell(index : Integer; var available : statusTracker);
-   	function gen_board(n : Integer; var available : statusTracker) : matrix;
+    procedure print_board(board : matrix; n : integer; reveal : Boolean); {Print the board}
+    procedure popCell(index : Integer; var available : statusTracker); {Pop the element at the given index for a dynamic array}
+   	function gen_board(n : Integer; var available : statusTracker) : matrix; { Generate a board and the array to keep track of available cells}
 
 
 
 implementation
 	
-	procedure print_board(board : matrix; n : integer; reveal: Boolean) ;
+	procedure print_board(board : matrix; n : integer; reveal: Boolean) ; {No furthur comments required, I think.}
 	var
 	    i, j : Integer;
 	begin
@@ -63,7 +63,7 @@ implementation
 	end;
 
 
-	procedure popCell(index : Integer; var available : statusTracker);
+	procedure popCell(index : Integer; var available : statusTracker); {The same logic as popVal, just different implementation for a dynamic array}
     var
     	i : Integer;
     begin
@@ -88,7 +88,7 @@ implementation
 	    setLength(board, n, n);
 	    setLength(available, (n*n));
 	    i := 0;
-	    repeat
+	    repeat {Create a set of random values with (n*n)/2 elements}
 	            j := random(99)+1; {Not using random(100) cause tmpSet is defined for 1..100 ... in cases where random produces 0, there will be a runtime error}
 	            if not (j in tmpSet) then
 	                begin
@@ -100,12 +100,12 @@ implementation
 	    i := 1;
 	    for tmp in tmpSet do
 	        begin
-	            arr[2*(i-1) + 1] := tmp;
+	            arr[2*(i-1) + 1] := tmp; {"Convert" the set to an array. The "function" I am using for indexing is inspired by what I think is the array addressing function}
 	            arr[2*(i-1) + 2] := tmp;
 	            i := i + 1;
 	        end;
 
-	    for l := 1 to 100 do
+	    for l := 1 to 100 do {Randomize the values in the array, using a new random seed each time}
 	        begin
 	                randseed := arr[1];
 	                for i := 1 to (n*n) do
@@ -117,9 +117,9 @@ implementation
 	                        arr[j] := arr[k];
 	                        arr[k] := tmp;
 	                    end;
-	        end;
+	        end; 
 	    
-	    for i := low(board) to high(board) do
+	    for i := low(board) to high(board) do  {Convert that 1D, static array to this 2D, dynamic array using the similar addressing/indexing function}
 	        for j := low(board[i]) to high(board[i]) do
 	        	begin
 	        		board[i, j].val := arr[ (i * n) + j + 1];
